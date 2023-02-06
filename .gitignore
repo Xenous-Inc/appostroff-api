@@ -30,7 +30,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # env files
 .env*.local
 .env
-.env.test
+.test.env
+.development.env
+.production.env
 .env.dev
 .env.prod
 
