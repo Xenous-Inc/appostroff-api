@@ -9,7 +9,7 @@ export class LoggerMiddleware implements NestMiddleware {
         try {
             const { ip, baseUrl, headers } = req;
             const id = headers['x-request-id'] || uuidv4();
-            logger.info(`IP: "${ip}", Route: "${baseUrl}", ID: "${id}"`);
+            logger.info(`IP: "${ip}", Route: "${baseUrl}", RequestId: "${id}"`);
         } catch (e) {
             logger.error(JSON.stringify(e));
         }
