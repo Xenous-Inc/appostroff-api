@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { configuration } from './config/configuration';
 import { validationSchema } from './config/validation';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { DatabaseModule } from './core/database/database.module';
+
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -13,6 +15,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
             load: [configuration],
             isGlobal: true,
         }),
+        DatabaseModule,
     ],
     controllers: [AppController],
     providers: [AppService],
