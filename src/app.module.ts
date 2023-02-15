@@ -25,8 +25,11 @@ import { User } from './modules/users/users.model';
             password: configuration().db_pass,
             database: configuration().db_name_development,
             autoLoadModels: true,
-            ssl: {
-                require: true,
+            dialectOptions: {
+                ssl: {
+                    require: 'true',
+                    rejectUnauthorized: false,
+                },
             },
             models: [User],
         }),
