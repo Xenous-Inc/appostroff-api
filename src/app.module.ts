@@ -5,17 +5,31 @@ import { ConfigModule } from '@nestjs/config';
 import { configuration } from './config/configuration';
 import { validationSchema } from './config/validation';
 import { LoggerMiddleware } from './middleware/logger.middleware';
-import { DatabaseModule } from './core/database/database.module';
 import { UsersModule } from './modules/users/users.module';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { User } from './modules/users/users.model';
+
 @Module({
     imports: [
         ConfigModule.forRoot({
             validationSchema,
-            envFilePath: `${process.cwd()}/${process.env.NODE_ENV}.env`,
+            envFilePath: `${process.cwd()}/.${process.env.NODE_ENV}.env`,
             load: [configuration],
             isGlobal: true,
         }),
-        DatabaseModule,
+        SequelizeModule.forRoot({
+            dialect: 'postgres',
+            host: configuration().db_host,
+            port: configuration().db_port,
+            username: configuration().db_user,
+            password: configuration().db_pass,
+            database: configuration().db_name_development,
+            autoLoadModels: true,
+            ssl: {
+                require: true,
+            },
+            models: [User],
+        }),
         UsersModule,
     ],
     controllers: [AppController],
