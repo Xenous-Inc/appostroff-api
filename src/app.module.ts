@@ -8,6 +8,9 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { UsersModule } from './modules/users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './modules/users/users.model';
+import { AuthModule } from './modules/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AtGuard } from './core/common/guards';
 
 @Module({
     imports: [
@@ -34,9 +37,16 @@ import { User } from './modules/users/users.model';
             models: [User],
         }),
         UsersModule,
+        AuthModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: AtGuard,
+        },
+    ],
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {

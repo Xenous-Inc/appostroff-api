@@ -9,7 +9,9 @@ export const configuration = () => ({
     db_name_test: process.env.DB_NAME_TEST,
     db_name_development: process.env.DB_NAME_DEVELOPMENT,
     db_name_production: process.env.DB_NAME_PRODUCTION,
-    jwtkey: process.env.JWTKEY,
-    token_expiration: process.env.TOKEN_EXPIRATION,
-    bearear: process.env.BEARER,
+    at_secret: process.env.AT_SECRET,
+    rt_secret: process.env.RT_SECRET,
+    at_expiration: process.env.AT_EXPIRATION,
+    rt_expiration: process.env.RT_EXPIRATION,
+    salt: parseInt(process.env.SALT, 10) || 12,
 });

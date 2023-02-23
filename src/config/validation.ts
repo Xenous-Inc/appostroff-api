@@ -11,7 +11,9 @@ export const validationSchema = Joi.object({
     DB_NAME_TEST: Joi.string(),
     DB_NAME_DEVELOPMENT: Joi.string(),
     DB_NAME_PRODUCTION: Joi.string(),
-    JWTKEY: Joi.string(),
-    TOKEN_EXPIRATION: Joi.string(),
-    BEARER: Joi.string(),
+    AT_SECRET: Joi.string(),
+    AT_EXPIRATION: Joi.string(),
+    RT_SECRET: Joi.string(),
+    RT_EXPIRATION: Joi.string(),
+    SALT: Joi.number().default(12),
 });

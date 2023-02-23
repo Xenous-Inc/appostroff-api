@@ -11,6 +11,9 @@ export class User extends Model<User> {
 
     @Column({ type: DataType.STRING })
     name: string;
+
+    @Column({ type: DataType.STRING })
+    hashedRt: string;
     //	quotes: ...
     //	stats:...
     //	interests: ...
