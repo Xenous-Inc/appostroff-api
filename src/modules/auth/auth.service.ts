@@ -7,6 +7,7 @@ import { hashSync, genSalt, compareSync } from 'bcryptjs';
 import { User } from '../users/users.model';
 import { JwtPayload } from './types';
 import { configuration } from '../../config/configuration';
+import * as defaults from '../../core/constants';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
     }
     async signIn(dto: CreateUserDto): Promise<Tokens> {
         const currentUser = await this.userModel.findOne({ where: { phone: dto.phone, name: dto.name } });
-        if (!currentUser) throw new ForbiddenException('Access Denied');
+        if (!currentUser) throw new ForbiddenException(defaults.ACCESS_DENIED);
         const tokens = await this.getTokens(currentUser.id, currentUser.phone);
         await this.updateRtHash(currentUser.id, tokens.refresh_token);
 
@@ -35,9 +36,9 @@ export class AuthService {
 
     async refreshTokens(id: string, rt: string): Promise<Tokens> {
         const currentUser = await this.userModel.findOne({ where: { id: id } });
-        if (!currentUser || !currentUser.hashedRt) throw new ForbiddenException('Access Denied');
+        if (!currentUser || !currentUser.hashedRt) throw new ForbiddenException(defaults.ACCESS_DENIED);
         const rtMatch = await compareSync(rt, currentUser.hashedRt);
-        if (!rtMatch) throw new ForbiddenException('Access Denied');
+        if (!rtMatch) throw new ForbiddenException(defaults.ACCESS_DENIED);
 
         const tokens = await this.getTokens(currentUser.id, currentUser.phone);
         await this.updateRtHash(currentUser.id, tokens.refresh_token);
