@@ -5,20 +5,48 @@ import { ConfigModule } from '@nestjs/config';
 import { configuration } from './config/configuration';
 import { validationSchema } from './config/validation';
 import { LoggerMiddleware } from './middleware/logger.middleware';
-import { DatabaseModule } from './core/database/database.module';
+import { UsersModule } from './modules/users/users.module';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { User } from './modules/users/users.model';
+import { AuthModule } from './modules/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AtGuard } from './core/common/guards';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             validationSchema,
-            envFilePath: `${process.cwd()}/${process.env.NODE_ENV}.env`,
+            envFilePath: `${process.cwd()}/.${process.env.NODE_ENV}.env`,
             load: [configuration],
             isGlobal: true,
         }),
-        DatabaseModule,
+        SequelizeModule.forRoot({
+            dialect: 'postgres',
+            host: configuration().db_host,
+            port: configuration().db_port,
+            username: configuration().db_user,
+            password: configuration().db_pass,
+            database: configuration().db_name_development,
+            autoLoadModels: true,
+            dialectOptions: {
+                ssl: {
+                    require: 'true',
+                    rejectUnauthorized: false,
+                },
+            },
+            models: [User],
+        }),
+        UsersModule,
+        AuthModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: AtGuard,
+        },
+    ],
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
