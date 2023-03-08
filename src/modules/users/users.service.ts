@@ -10,17 +10,23 @@ export class UsersService {
     async create(user: CreateUserDto): Promise<User> {
         return await this.userModel.create<User>(user);
     }
-    async findUserById(id: string): Promise<User> {
+    async findOne(id: string): Promise<User> {
         return await this.userModel.findOne({ where: { id } });
     }
-    async findAllUsers(): Promise<User[]> {
+    async findAll(): Promise<User[]> {
         return await this.userModel.findAll();
     }
 
     async updateUser(user: UpdateUserDto, id: string) {
-        return this.userModel.update(user, { where: { id } });
+        const updUser = {
+            name: user.name,
+            phone: user.phone,
+        };
+        const userU = await this.userModel.update(updUser, { where: { id }, returning: true });
+        return userU;
     }
-    async removeUser(id: string) {
-        await this.userModel.destroy({ where: { id } });
+    async removeUser(id: string): Promise<void> {
+        const user = await this.findOne(id);
+        await user.destroy();
     }
 }
