@@ -16,4 +16,7 @@ export const validationSchema = Joi.object({
     RT_SECRET: Joi.string(),
     RT_EXPIRATION: Joi.string(),
     SALT: Joi.number().default(12),
+    INIT_CALL_URL: Joi.string(),
+    INIT_REPEAT_URL: Joi.string(),
+    UCALLER_AUTH: Joi.string(),
 });

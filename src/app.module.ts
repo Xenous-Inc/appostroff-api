@@ -11,6 +11,7 @@ import { User } from './modules/users/users.model';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './core/common/guards';
+import { Auth } from './modules/auth/auth.model';
 
 @Module({
     imports: [
@@ -34,7 +35,7 @@ import { AtGuard } from './core/common/guards';
                     rejectUnauthorized: false,
                 },
             },
-            models: [User],
+            models: [User, Auth],
         }),
         UsersModule,
         AuthModule,

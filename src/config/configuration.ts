@@ -14,4 +14,7 @@ export const configuration = () => ({
     at_expiration: process.env.AT_EXPIRATION,
     rt_expiration: process.env.RT_EXPIRATION,
     salt: parseInt(process.env.SALT, 10) || 12,
+    init_call_url: process.env.INIT_CALL_URL,
+    init_repeat_url: process.env.INIT_REPEAT_URL,
+    ucaller_auth_data: process.env.UCALLER_AUTH,
 });

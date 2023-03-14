@@ -2,33 +2,69 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Tokens } from './types';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { hashSync, genSalt, compareSync } from 'bcryptjs';
 import { User } from '../users/users.model';
 import { JwtPayload } from './types';
 import { configuration } from '../../config/configuration';
-import * as defaults from '../../core/constants';
+import { AuthDto } from './dto/auth.dto';
+import { Auth } from './auth.model';
 
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel(User) private userModel: typeof User, private jwtService: JwtService) {}
-    async signUp(dto: CreateUserDto): Promise<Tokens> {
-        const currentUser = await this.userModel.create({
-            name: dto.name,
-            phone: dto.phone,
+    constructor(
+        @InjectModel(User) private userModel: typeof User,
+        private jwtService: JwtService,
+        @InjectModel(Auth) private authModule: typeof Auth,
+    ) {}
+    // async signUp(dto: CreateUserDto): Promise<Tokens> {
+    //     const currentUser = await this.userModel.create({
+    //         name: dto.name,
+    //         phone: dto.phone,
+    //     });
+    //     const tokens = await this.getTokens(currentUser.id, currentUser.phone);
+    //     await this.updateRtHash(currentUser.id, tokens.refresh_token);
+    //     return tokens;
+    // }
+    async requestCode(dto: AuthDto) {
+        const response = await fetch(configuration().init_call_url, {
+            method: 'POST',
+            headers: {
+                'Authorization': configuration().ucaller_auth_data,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dto.phone.slice(1)),
         });
-        const tokens = await this.getTokens(currentUser.id, currentUser.phone);
-        await this.updateRtHash(currentUser.id, tokens.refresh_token);
-        return tokens;
+        const result = await response.json();
+        if (result.status != 200) {
+            throw new ForbiddenException('Access denied');
+            return false;
+        }
+        const currentConfirmation = await this.authModule.create({
+            phone: dto.phone,
+            code: result.code,
+            isConfirmed: false,
+            callId: result.ucaller_id,
+        });
+        return true;
     }
-    async signIn(dto: CreateUserDto): Promise<Tokens> {
-        const currentUser = await this.userModel.findOne({ where: { phone: dto.phone, name: dto.name } });
-        if (!currentUser) throw new ForbiddenException(defaults.ACCESS_DENIED);
-        const tokens = await this.getTokens(currentUser.id, currentUser.phone);
-        await this.updateRtHash(currentUser.id, tokens.refresh_token);
 
+    async confirmationCode(dto: AuthDto): Promise<Tokens> {
+        const currentConfirmation = await this.authModule.findOne({ where: { phone: dto.phone } });
+
+        if (dto.code != currentConfirmation.code) {
+            throw new ForbiddenException('Access denied');
+        }
+        let currentUser = await this.userModel.findOne({ where: { phone: dto.phone } });
+        if (!currentUser) {
+            currentUser = await this.userModel.create({
+                phone: dto.phone,
+            });
+        }
+        const tokens = await this.getTokens(currentUser.id, currentUser.phone);
+        await this.updateRtHash(currentUser.id, tokens.refresh_token);
         return tokens;
     }
+
     async logout(id: string): Promise<boolean> {
         await this.userModel.update({ hashedRt: null }, { where: { id: id } });
         return true;
@@ -36,9 +72,9 @@ export class AuthService {
 
     async refreshTokens(id: string, rt: string): Promise<Tokens> {
         const currentUser = await this.userModel.findOne({ where: { id: id } });
-        if (!currentUser || !currentUser.hashedRt) throw new ForbiddenException(defaults.ACCESS_DENIED);
+        if (!currentUser || !currentUser.hashedRt) throw new ForbiddenException('Access denied');
         const rtMatch = await compareSync(rt, currentUser.hashedRt);
-        if (!rtMatch) throw new ForbiddenException(defaults.ACCESS_DENIED);
+        if (!rtMatch) throw new ForbiddenException('Access denied');
 
         const tokens = await this.getTokens(currentUser.id, currentUser.phone);
         await this.updateRtHash(currentUser.id, tokens.refresh_token);
