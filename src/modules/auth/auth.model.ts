@@ -1,4 +1,4 @@
-import { Column, Table, DataType, Model, ForeignKey } from 'sequelize-typescript';
+import { Column, Table, DataType, Model, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import sequelize from 'sequelize';
 import { User } from '../users/users.model';
 
@@ -8,24 +8,21 @@ export class Auth extends Model<Auth> {
     id: string;
 
     @ForeignKey(() => User)
-    @Column({
-        type: DataType.UUID,
-        unique: true,
-        references: { model: 'users', key: 'id' },
-        allowNull: true,
-        defaultValue: sequelize.UUIDV4,
-    })
+    @Column({ type: DataType.UUID })
     userId: string;
 
-    @Column({ type: DataType.STRING, unique: true })
+    @BelongsTo(() => User)
+    user: User;
+
+    @Column({ type: DataType.STRING })
     phone: string;
 
-    @Column({ type: DataType.NUMBER })
+    @Column({ type: DataType.INTEGER })
     code: number;
 
     @Column({ type: DataType.BOOLEAN })
     isConfirmed: boolean;
 
-    @Column({ type: DataType.NUMBER })
-    callId: string;
+    @Column({ type: DataType.INTEGER })
+    callId: number;
 }

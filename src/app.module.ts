@@ -30,10 +30,10 @@ import { Auth } from './modules/auth/auth.model';
             database: configuration().db_name_development,
             autoLoadModels: true,
             dialectOptions: {
-                ssl: {
-                    require: 'true',
-                    rejectUnauthorized: false,
-                },
+                // ssl: {
+                //     require: 'true',
+                //     rejectUnauthorized: false,
+                // },
             },
             models: [User, Auth],
         }),

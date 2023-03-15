@@ -16,5 +16,6 @@ export const configuration = () => ({
     salt: parseInt(process.env.SALT, 10) || 12,
     init_call_url: process.env.INIT_CALL_URL,
     init_repeat_url: process.env.INIT_REPEAT_URL,
-    ucaller_auth_data: process.env.UCALLER_AUTH,
+    ucaller_token: process.env.UCALLER_TOKEN,
+    ucaller_id: process.env.UCALLER_ID,
 });

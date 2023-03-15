@@ -16,32 +16,25 @@ export class AuthService {
         private jwtService: JwtService,
         @InjectModel(Auth) private authModule: typeof Auth,
     ) {}
-    // async signUp(dto: CreateUserDto): Promise<Tokens> {
-    //     const currentUser = await this.userModel.create({
-    //         name: dto.name,
-    //         phone: dto.phone,
-    //     });
-    //     const tokens = await this.getTokens(currentUser.id, currentUser.phone);
-    //     await this.updateRtHash(currentUser.id, tokens.refresh_token);
-    //     return tokens;
-    // }
+
     async requestCode(dto: AuthDto) {
-        const response = await fetch(configuration().init_call_url, {
-            method: 'POST',
+        const url = `https://api.ucaller.ru/v1.0/initCall?service_id=${configuration().ucaller_id}&key=${
+            configuration().ucaller_token
+        }&phone=${dto.phone.slice(1)}`;
+        console.log(url);
+        const response: any = await fetch(url, {
             headers: {
-                'Authorization': configuration().ucaller_auth_data,
+                'Authorization': `Bearear ${configuration().ucaller_token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(dto.phone.slice(1)),
         });
         const result = await response.json();
-        if (result.status != 200) {
+        if (response.status != 200) {
             throw new ForbiddenException('Access denied');
-            return false;
         }
-        const currentConfirmation = await this.authModule.create({
+        await this.authModule.create({
             phone: dto.phone,
-            code: result.code,
+            code: parseInt(result.code),
             isConfirmed: false,
             callId: result.ucaller_id,
         });
@@ -60,6 +53,7 @@ export class AuthService {
                 phone: dto.phone,
             });
         }
+        await this.authModule.update({ isConfirmed: true }, { where: { phone: dto.phone } });
         const tokens = await this.getTokens(currentUser.id, currentUser.phone);
         await this.updateRtHash(currentUser.id, tokens.refresh_token);
         return tokens;
