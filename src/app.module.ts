@@ -29,12 +29,10 @@ import { Auth } from './modules/auth/auth.model';
             password: configuration().db_pass,
             database: configuration().db_name_development,
             autoLoadModels: true,
-            dialectOptions: {
-                // ssl: {
-                //     require: 'true',
-                //     rejectUnauthorized: false,
-                // },
-            },
+            dialectOptions:
+                process.env.NODE_ENV == 'production'
+                    ? { ssl: { require: 'true', rejectUnauthorized: false } }
+                    : undefined,
             models: [User, Auth],
         }),
         UsersModule,

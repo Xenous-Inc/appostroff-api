@@ -6,8 +6,9 @@ import { hashSync, genSalt, compareSync } from 'bcryptjs';
 import { User } from '../users/users.model';
 import { JwtPayload } from './types';
 import { configuration } from '../../config/configuration';
-import { AuthDto } from './dto/auth.dto';
+import { ConfirmCodeDto } from './dto/confirmCode.dto';
 import { Auth } from './auth.model';
+import { RequestCodeDto } from './dto/requestCode.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,15 +18,14 @@ export class AuthService {
         @InjectModel(Auth) private authModule: typeof Auth,
     ) {}
 
-    async requestCode(dto: AuthDto) {
+    async requestCode(dto: RequestCodeDto) {
         const url = `https://api.ucaller.ru/v1.0/initCall?service_id=${configuration().ucaller_id}&key=${
             configuration().ucaller_token
         }&phone=${dto.phone.slice(1)}`;
         console.log(url);
         const response: any = await fetch(url, {
             headers: {
-                'Authorization': `Bearear ${configuration().ucaller_token}`,
-                'Content-Type': 'application/json',
+                Authorization: `Bearear ${configuration().ucaller_token}`,
             },
         });
         const result = await response.json();
@@ -41,7 +41,7 @@ export class AuthService {
         return true;
     }
 
-    async confirmationCode(dto: AuthDto): Promise<Tokens> {
+    async confirmationCode(dto: ConfirmCodeDto): Promise<Tokens> {
         const currentConfirmation = await this.authModule.findOne({ where: { phone: dto.phone } });
 
         if (dto.code != currentConfirmation.code) {
