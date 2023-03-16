@@ -18,7 +18,7 @@ export class AuthService {
         @InjectModel(Auth) private authModule: typeof Auth,
     ) {}
 
-    async requestCode(dto: RequestCodeDto) {
+    async requestCode(dto: RequestCodeDto): Promise<string> {
         const url = `https://api.ucaller.ru/v1.0/initCall?service_id=${configuration().ucaller_id}&key=${
             configuration().ucaller_token
         }&phone=${dto.phone.slice(1)}`;
@@ -32,28 +32,29 @@ export class AuthService {
         if (response.status != 200) {
             throw new ForbiddenException('Access denied');
         }
-        await this.authModule.create({
+        const currentCode = await this.authModule.create({
             phone: dto.phone,
             code: parseInt(result.code),
             isConfirmed: false,
             callId: result.ucaller_id,
         });
-        return true;
+        return currentCode.id;
     }
 
     async confirmationCode(dto: ConfirmCodeDto): Promise<Tokens> {
-        const currentConfirmation = await this.authModule.findOne({ where: { phone: dto.phone } });
+        const currentConfirmation = await this.authModule.findOne({ where: { id: dto.callId } });
 
         if (dto.code != currentConfirmation.code) {
             throw new ForbiddenException('Access denied');
         }
-        let currentUser = await this.userModel.findOne({ where: { phone: dto.phone } });
+        let currentUser = await this.userModel.findOne({ where: { phone: currentConfirmation.phone } });
         if (!currentUser) {
             currentUser = await this.userModel.create({
-                phone: dto.phone,
+                phone: currentConfirmation.phone,
             });
         }
-        await this.authModule.update({ isConfirmed: true }, { where: { phone: dto.phone } });
+        await this.authModule.update({ userId: currentUser.id }, { where: { id: dto.callId } });
+        await this.authModule.update({ isConfirmed: true }, { where: { id: dto.callId } });
         const tokens = await this.getTokens(currentUser.id, currentUser.phone);
         await this.updateRtHash(currentUser.id, tokens.refresh_token);
         return tokens;

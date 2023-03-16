@@ -1,8 +1,11 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { RequestCodeDto } from './requestCode.dto';
-export class ConfirmCodeDto extends PartialType(RequestCodeDto) {
+export class ConfirmCodeDto {
     @IsNumber()
     @ApiProperty({ description: 'Verification code received from the call' })
     code: number;
+
+    @IsString()
+    @ApiProperty({ description: 'Call id from database' })
+    callId: string;
 }

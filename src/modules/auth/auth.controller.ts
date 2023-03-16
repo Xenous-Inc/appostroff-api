@@ -17,7 +17,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Request a phone call for auth' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Requested a phone call', type: Boolean })
-    requestCode(@Body() dto: RequestCodeDto): Promise<boolean> {
+    requestCode(@Body() dto: RequestCodeDto): Promise<string> {
         return this.authService.requestCode(dto);
     }
 

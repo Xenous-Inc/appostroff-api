@@ -27,7 +27,7 @@ import { Auth } from './modules/auth/auth.model';
             port: configuration().db_port,
             username: configuration().db_user,
             password: configuration().db_pass,
-            database: configuration().db_name_development,
+            database: configuration().db_name,
             autoLoadModels: true,
             dialectOptions:
                 process.env.NODE_ENV == 'production'
