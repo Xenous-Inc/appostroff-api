@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Tokens } from './types';
-import { GetCurrentUser, GetCurrentUserId, Public } from '../../core/common/decorators';
-import { RtGuard } from '../../core/common/guards';
+import { GetCurrentUser, GetCurrentUserId, Public } from '../../core/common/auth/decorators';
+import { RtGuard } from '../../core/common/auth/guards';
 import { ConfirmCodeDto } from './dto/confirmCode.dto';
 import { RequestCodeDto } from './dto/requestCode.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';

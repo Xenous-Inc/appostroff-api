@@ -9,9 +9,10 @@ import { UsersModule } from './modules/users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './modules/users/users.model';
 import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AtGuard } from './core/common/guards';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { AtGuard } from './core/common/auth/guards';
 import { Auth } from './modules/auth/auth.model';
+import { SequelizeExceptionFilter } from './core/common/exceptions/sequelize-exception.filter';
 
 @Module({
     imports: [
@@ -45,6 +46,7 @@ import { Auth } from './modules/auth/auth.model';
             provide: APP_GUARD,
             useClass: AtGuard,
         },
+        { provide: APP_FILTER, useClass: SequelizeExceptionFilter },
     ],
 })
 export class AppModule {
