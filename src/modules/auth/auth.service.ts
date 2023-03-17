@@ -38,7 +38,7 @@ export class AuthService {
             isConfirmed: false,
             callId: result.ucaller_id,
         });
-        return currentCode.id;
+        return JSON.stringify({ callId: currentCode.id });
     }
 
     async confirmationCode(dto: ConfirmCodeDto): Promise<Tokens> {
