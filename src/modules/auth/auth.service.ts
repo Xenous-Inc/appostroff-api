@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { hashSync, genSalt, compareSync } from 'bcryptjs';
-import { User } from '../users/users.model';
+import { User } from '../models/users.model';
 import { JwtPayload } from './types';
 import { configuration } from '../../config/configuration';
 import * as defaults from '../../core/constants';

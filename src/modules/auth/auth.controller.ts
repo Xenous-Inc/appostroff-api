@@ -5,18 +5,24 @@ import { Tokens } from './types';
 import { GetCurrentUser, GetCurrentUserId, Public } from '../../core/common/decorators';
 import { RtGuard } from '../../core/common/guards';
 import * as defaults from '../../core/constants';
+import { Roles } from 'src/core/common/decorators/roles-auth.decorator';
+import { RolesGuard } from 'src/core/common/guards/roles.guard';
+import { UserRole } from '../models/types';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) {}
     @Public()
     @Post(defaults.SIGN_UP)
+    @Roles(UserRole.Admin)
+    @UseGuards(RolesGuard)
     @HttpCode(HttpStatus.CREATED)
     signUp(@Body() dto: CreateUserDto): Promise<Tokens> {
         return this.authService.signUp(dto);
     }
 
     @Public()
+    @UseGuards(RolesGuard)
     @Post(defaults.SIGN_IN)
     @HttpCode(HttpStatus.OK)
     signIn(@Body() dto: CreateUserDto): Promise<Tokens> {

@@ -16,10 +16,6 @@ export class UsersController {
     findAll() {
         return this.usersService.findAllUsers();
     }
-    @Post()
-    create(@Body() user: CreateUserDto) {
-        return this.usersService.create(user);
-    }
     @Delete(':id')
     removeUser(@Param('id') id: string) {
         return this.usersService.removeUser(id);
