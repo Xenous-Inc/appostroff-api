@@ -21,6 +21,7 @@ import { GenreToAuthor } from './modules/models/genre-author.model';
 import { AuthorsModule } from './modules/authors/authors.module';
 import { GenresModule } from './modules/genres/genres.module';
 import { StoryToGenre } from './modules/models/story-genre.model';
+import { Auth } from './modules/auth/auth.model';
 
 @Module({
     imports: [
@@ -36,7 +37,7 @@ import { StoryToGenre } from './modules/models/story-genre.model';
             port: configuration().db_port,
             username: configuration().db_user,
             password: configuration().db_pass,
-            database: configuration().db_name_development,
+            database: configuration().db_name,
             autoLoadModels: true,
             // dialectOptions: {
             //     ssl: {
@@ -45,6 +46,11 @@ import { StoryToGenre } from './modules/models/story-genre.model';
             //     },
             // },
             models: [User, Story, Author, Genre, UserToStory, StoryToAuthor, GenreToAuthor, StoryToGenre],
+            dialectOptions:
+                process.env.NODE_ENV == 'production'
+                    ? { ssl: { require: 'true', rejectUnauthorized: false } }
+                    : undefined,
+            models: [User, Auth],
         }),
         GenresModule,
         AuthorsModule,
