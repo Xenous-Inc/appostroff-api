@@ -11,6 +11,7 @@ import { User } from './modules/users/users.model';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './core/common/guards';
+import { Auth } from './modules/auth/auth.model';
 
 @Module({
     imports: [
@@ -26,15 +27,13 @@ import { AtGuard } from './core/common/guards';
             port: configuration().db_port,
             username: configuration().db_user,
             password: configuration().db_pass,
-            database: configuration().db_name_development,
+            database: configuration().db_name,
             autoLoadModels: true,
-            dialectOptions: {
-                ssl: {
-                    require: 'true',
-                    rejectUnauthorized: false,
-                },
-            },
-            models: [User],
+            dialectOptions:
+                process.env.NODE_ENV == 'production'
+                    ? { ssl: { require: 'true', rejectUnauthorized: false } }
+                    : undefined,
+            models: [User, Auth],
         }),
         UsersModule,
         AuthModule,

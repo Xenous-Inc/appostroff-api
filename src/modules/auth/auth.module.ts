@@ -5,9 +5,10 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from '../users/users.model';
 import { AtStrategy, RtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
+import { Auth } from './auth.model';
 
 @Module({
-    imports: [SequelizeModule.forFeature([User]), JwtModule.register({})],
+    imports: [SequelizeModule.forFeature([User, Auth]), JwtModule.register({})],
     providers: [AuthService, AtStrategy, RtStrategy],
     controllers: [AuthController],
 })
