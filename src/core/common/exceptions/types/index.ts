@@ -3,8 +3,9 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 export enum AppostroffExceptionCode {
     AccessDenied = 600,
     WrongPhoneCode = 601,
-    SessionNotFound = 602,
+    UserNotFound = 602,
     InvalidToken = 603,
+    ServiceUnavailable = 604,
 }
 export interface IAppostroffExceptionResponse {
     code: AppostroffExceptionCode;

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Tokens } from './types';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
@@ -9,7 +9,12 @@ import { configuration } from '../../config/configuration';
 import { ConfirmCodeDto } from './dto/confirmCode.dto';
 import { Auth } from './auth.model';
 import { RequestCodeDto } from './dto/requestCode.dto';
-import { InvalidTokenException, SessionNotFoundException, WrongPhoneCodeException } from '../../core/common/exceptions';
+import {
+    InvalidTokenException,
+    ServiceUnavailableException,
+    UserNotFoundException,
+    WrongPhoneCodeException,
+} from '../../core/common/exceptions';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +36,7 @@ export class AuthService {
         });
         const result = await response.json();
         if (response.status != 200) {
-            throw new ForbiddenException('');
+            throw new ServiceUnavailableException();
         }
         await this.authModule.create({
             phone: dto.phone,
@@ -67,7 +72,7 @@ export class AuthService {
 
     async refreshTokens(id: string, rt: string): Promise<Tokens> {
         const currentUser = await this.userModel.findOne({ where: { id: id } });
-        if (!currentUser || !currentUser.hashedRt) throw new SessionNotFoundException();
+        if (!currentUser || !currentUser.hashedRt) throw new UserNotFoundException();
         const rtMatch = await compareSync(rt, currentUser.hashedRt);
         if (!rtMatch) throw new InvalidTokenException();
 

@@ -1,11 +1,11 @@
 import { HttpStatus } from '@nestjs/common';
 import { AppostroffException, AppostroffExceptionCode } from '../types';
 
-export class SessionNotFoundException extends AppostroffException {
+export class ServiceUnavailableException extends AppostroffException {
     constructor() {
         super(
             {
-                code: AppostroffExceptionCode.SessionNotFound,
+                code: AppostroffExceptionCode.ServiceUnavailable,
                 message: 'Session not found',
             },
             HttpStatus.UNAUTHORIZED,
