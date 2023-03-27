@@ -27,13 +27,9 @@ export class Story extends Model<Story> {
     @ApiProperty({ description: 'Story title' })
     title: string;
 
-    @Column({ type: DataType.NUMBER, defaultValue: 0 })
+    @Column({ type: DataType.FLOAT, defaultValue: 0 })
     @ApiProperty({ description: 'Story rating' })
     rating: number;
-
-    @Column({ type: DataType.NUMBER, defaultValue: 0 })
-    @ApiProperty({ description: 'Story duration' })
-    duration: number;
 
     @Column({ type: DataType.STRING })
     @ApiProperty({ description: 'Story description' })

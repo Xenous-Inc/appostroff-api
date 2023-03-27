@@ -1,6 +1,6 @@
 import { Column, Table, DataType, Model, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import sequelize from 'sequelize';
-import { User } from '../users/users.model';
+import { User } from '../models/users.model';
 
 @Table({ tableName: 'PhoneConfirmation' })
 export class Auth extends Model<Auth> {
@@ -17,7 +17,7 @@ export class Auth extends Model<Auth> {
     @Column({ type: DataType.STRING })
     phone: string;
 
-    @Column({ type: DataType.INTEGER, defaultValue: false })
+    @Column({ type: DataType.INTEGER })
     code: number;
 
     @Column({ type: DataType.BOOLEAN })

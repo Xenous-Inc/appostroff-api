@@ -22,6 +22,9 @@ import { AuthorsModule } from './modules/authors/authors.module';
 import { GenresModule } from './modules/genres/genres.module';
 import { StoryToGenre } from './modules/models/story-genre.model';
 import { Auth } from './modules/auth/auth.model';
+import { RolesModule } from './modules/roles/roles.module';
+import { Role } from './modules/roles/roles.model';
+import { UserToRole } from './modules/models/user-role.model';
 
 @Module({
     imports: [
@@ -39,19 +42,25 @@ import { Auth } from './modules/auth/auth.model';
             password: configuration().db_pass,
             database: configuration().db_name,
             autoLoadModels: true,
-            // dialectOptions: {
-            //     ssl: {
-            //         require: 'true',
-            //         rejectUnauthorized: false,
-            //     },
-            // },
-            models: [User, Story, Author, Genre, UserToStory, StoryToAuthor, GenreToAuthor, StoryToGenre],
-            dialectOptions:
-                process.env.NODE_ENV == 'production'
-                    ? { ssl: { require: 'true', rejectUnauthorized: false } }
-                    : undefined,
-            models: [User, Auth],
+            models: [
+                User,
+                Story,
+                Author,
+                Genre,
+                UserToStory,
+                UserToRole,
+                StoryToAuthor,
+                GenreToAuthor,
+                StoryToGenre,
+                Role,
+                Auth,
+            ],
+            // dialectOptions:
+            //     process.env.NODE_ENV == 'production'
+            //         ? { ssl: { require: 'true', rejectUnauthorized: false } }
+            //         : undefined,
         }),
+        RolesModule,
         GenresModule,
         AuthorsModule,
         StoriesModule,
