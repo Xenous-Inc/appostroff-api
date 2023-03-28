@@ -1,8 +1,8 @@
-import { Body, HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import sequelize, { Sequelize, where } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import { UserToStory } from '../models/user-story.model';
-import { User } from '../models/users.model';
+import { User } from '../users/users.model';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { Story } from './stories.model';
 
@@ -35,25 +35,15 @@ export class StoriesService {
         if (!user) {
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         }
-        const stories = user.stories;
+        const readStories = user.stories;
+        const allStories = await this.storyModel.findAll();
 
-        let randStory = await this.getRandomStory();
-
-        function checkAvailability(arr, val) {
-            console.log('ЭТО РАНДОМНАЯ СТОРКА!!!!!!!!');
-            console.log(val);
-            console.log('ЭТО МАССИВ!!!!!');
-            console.log(arr);
-            console.log('ЭТО ЗНАЧЕНИЕ ФУНКЦИИ!!!!!!!');
-            console.log(arr.some(arrVal => val === arrVal));
-            return arr.some(arrVal => val === arrVal);
+        if (readStories.length === allStories.length) {
+            throw new HttpException('No new stories, please wait', HttpStatus.NOT_FOUND);
         }
-
-        while (checkAvailability(stories, randStory)) {
-            console.log('АААААААААААААААААААААААААА\n');
-            console.log(checkAvailability(stories, randStory));
+        let randStory = await this.getRandomStory();
+        while (readStories.some(story => story.id === randStory.id)) {
             randStory = await this.getRandomStory();
-            console.log(randStory);
         }
         user.$add('stories', randStory);
         return randStory;

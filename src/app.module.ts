@@ -7,7 +7,6 @@ import { validationSchema } from './config/validation';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { UsersModule } from './modules/users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from './modules/models/users.model';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './core/common/guards';
@@ -25,6 +24,7 @@ import { Auth } from './modules/auth/auth.model';
 import { RolesModule } from './modules/roles/roles.module';
 import { Role } from './modules/roles/roles.model';
 import { UserToRole } from './modules/models/user-role.model';
+import { User } from './modules/users/users.model';
 
 @Module({
     imports: [

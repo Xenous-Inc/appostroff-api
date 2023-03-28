@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import sequelize from 'sequelize';
 import { Column, Table, DataType, Model, CreatedAt, UpdatedAt, BelongsToMany, HasMany } from 'sequelize-typescript';
 import { Auth } from '../auth/auth.model';
+import { UserToRole } from '../models/user-role.model';
+import { UserToStory } from '../models/user-story.model';
 import { Role } from '../roles/roles.model';
 import { Story } from '../stories/stories.model';
-import { UserToRole } from './user-role.model';
-import { UserToStory } from './user-story.model';
 
 @Table({ tableName: 'users' })
 export class User extends Model<User> {
@@ -29,7 +29,7 @@ export class User extends Model<User> {
     hashedRt: string;
 
     @BelongsToMany(() => Story, () => UserToStory)
-    stories: Array<Story & { UserToStory: UserToStory }>;
+    stories: Story[];
 
     @BelongsToMany(() => Role, () => UserToRole)
     roles: Role[];

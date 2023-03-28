@@ -2,11 +2,10 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@n
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Roles } from 'src/core/common/decorators/roles-auth.decorator';
 import { RolesGuard } from 'src/core/common/guards/roles.guard';
-import { UserRole } from '../models/types';
-import { User } from '../models/users.model';
 import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './users.model';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -14,6 +13,7 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @ApiOperation({ summary: 'Get user by ID' })
+    @ApiResponse({ status: 200, type: User })
     @Get(':id')
     findUserById(@Param('id') id: string) {
         return this.usersService.findUserById(id);
@@ -21,7 +21,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Get all users' })
     @ApiResponse({ status: 200, type: [User] })
-    @Roles(UserRole.Admin, UserRole.Moderator)
+    @Roles('ADMIN', 'MODERATOR')
     @UseGuards(RolesGuard)
     @Get()
     findAll() {
@@ -29,7 +29,8 @@ export class UsersController {
     }
 
     @ApiOperation({ summary: 'Delete user by ID' })
-    @Roles(UserRole.Moderator, UserRole.Admin)
+    @ApiResponse({ status: 200 })
+    @Roles('ADMIN', 'MODERATOR')
     @UseGuards(RolesGuard)
     @Delete(':id')
     removeUser(@Param('id') id: string) {
@@ -37,6 +38,8 @@ export class UsersController {
     }
 
     @ApiOperation({ summary: 'Update user' })
+    @ApiResponse({ status: 200, type: User })
+    @Roles('ADMIN', 'MODERATOR', 'READER', 'AUTHOR')
     @UseGuards(RolesGuard)
     @Patch(':id')
     updateUser(@Param('id') id: string, @Body() user: UpdateUserDto) {
@@ -54,7 +57,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Ban user' })
     @ApiResponse({ status: 200 })
-    @Roles(UserRole.Admin, UserRole.Moderator)
+    @Roles('ADMIN', 'MODERATOR')
     @UseGuards(RolesGuard)
     @Post('/ban')
     ban(@Body() dto: BanUserDto) {

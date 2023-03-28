@@ -3,17 +3,15 @@ import { Tokens } from './types';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 import { hashSync, genSalt, compareSync } from 'bcryptjs';
-import { User } from '../models/users.model';
 import { JwtPayload } from './types';
 import { configuration } from '../../config/configuration';
 import { ConfirmCodeDto } from './dto/confirmCode.dto';
 import { Auth } from './auth.model';
 import { RequestCodeDto } from './dto/requestCode.dto';
 import { UsersService } from '../users/users.service';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { Role } from '../roles/roles.model';
 import { RolesService } from '../roles/roles.service';
-import { UserRole } from '../models/types';
+import { User } from '../users/users.model';
 
 @Injectable()
 export class AuthService {

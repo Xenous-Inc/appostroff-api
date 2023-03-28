@@ -3,15 +3,10 @@ import { AuthService } from './auth.service';
 import { Tokens } from './types';
 import { GetCurrentUser, GetCurrentUserId, Public } from '../../core/common/decorators';
 import { RtGuard } from '../../core/common/guards';
-// import * as defaults from '../../core/constants';
-import { Roles } from 'src/core/common/decorators/roles-auth.decorator';
-import { RolesGuard } from 'src/core/common/guards/roles.guard';
-import { UserRole } from '../models/types';
 import { ConfirmCodeDto } from './dto/confirmCode.dto';
 import { RequestCodeDto } from './dto/requestCode.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { TokensResponse } from './types/responses/tokens.response';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {

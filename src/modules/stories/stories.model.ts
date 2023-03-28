@@ -3,10 +3,10 @@ import sequelize from 'sequelize';
 import { Author } from '../authors/authors.model';
 import { Genre } from '../genres/genres.model';
 import { UserToStory } from '../models/user-story.model';
-import { User } from '../models/users.model';
 import { StoryToAuthor } from '../models/story-author.model';
 import { StoryToGenre } from '../models/story-genre.model';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../users/users.model';
 
 @Table({ tableName: 'stories' })
 export class Story extends Model<Story> {

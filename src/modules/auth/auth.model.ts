@@ -1,6 +1,6 @@
 import { Column, Table, DataType, Model, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import sequelize from 'sequelize';
-import { User } from '../models/users.model';
+import { User } from '../users/users.model';
 
 @Table({ tableName: 'PhoneConfirmation' })
 export class Auth extends Model<Auth> {
