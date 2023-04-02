@@ -12,6 +12,7 @@ import { UsersService } from '../users/users.service';
 import { Role } from '../roles/roles.model';
 import { RolesService } from '../roles/roles.service';
 import { User } from '../users/users.model';
+import { InvalidTokenException, SessionNotFoundException, WrongPhoneCodeException } from '../../core/common/exceptions';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
         const result = await response.json();
         console.log(response);
         if (response.status != 200) {
-            throw new ForbiddenException('Access denied');
+            throw new ForbiddenException('');
         }
 
         const currentCode = await this.authModel.create({
@@ -51,7 +52,7 @@ export class AuthService {
         const currentConfirmation = await this.authModel.findOne({ where: { id: dto.callId } });
         console.log(currentConfirmation.phone);
         if (dto.code != currentConfirmation.code) {
-            throw new ForbiddenException('Access denied');
+            throw new WrongPhoneCodeException();
         }
         let currentUser = await this.userModel.findOne({ where: { phone: currentConfirmation.phone } });
 
@@ -74,10 +75,8 @@ export class AuthService {
     }
 
     async refreshTokens(id: string, rt: string): Promise<Tokens> {
-        const currentUser = await this.userModel.findOne({ where: { id } });
-        if (!currentUser || !currentUser.hashedRt) throw new ForbiddenException('Access denied');
         const rtMatch = await compareSync(rt, currentUser.hashedRt);
-        if (!rtMatch) throw new ForbiddenException('Access denied');
+        if (!rtMatch) throw new InvalidTokenException();
 
         const tokens = await this.getTokens(currentUser.id, currentUser.phone);
         await this.updateRtHash(currentUser.id, tokens.refresh_token);

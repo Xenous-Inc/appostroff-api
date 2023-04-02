@@ -25,6 +25,10 @@ import { RolesModule } from './modules/roles/roles.module';
 import { Role } from './modules/roles/roles.model';
 import { UserToRole } from './modules/models/user-role.model';
 import { User } from './modules/users/users.model';
+import { Auth } from './modules/auth/auth.model';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { AtGuard } from './core/common/auth/guards';
+import { SequelizeExceptionFilter } from './core/common/exceptions/sequelize-exception.filter';
 
 @Module({
     imports: [
@@ -74,6 +78,7 @@ import { User } from './modules/users/users.model';
             provide: APP_GUARD,
             useClass: AtGuard,
         },
+        { provide: APP_FILTER, useClass: SequelizeExceptionFilter },
     ],
 })
 export class AppModule {
