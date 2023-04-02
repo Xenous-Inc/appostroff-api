@@ -5,6 +5,8 @@ import { UserToStory } from '../models/user-story.model';
 import { User } from '../users/users.model';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { Story } from './stories.model';
+import { StoryNotFoundException } from 'src/core/common/exceptions/story/story-not-found.exception';
+import { UserNotFoundException } from 'src/core/common/exceptions/user/user-not-found.exception';
 
 @Injectable()
 export class StoriesService {
@@ -33,13 +35,13 @@ export class StoriesService {
     async getStory(userId: string) {
         const user = await this.userModel.findByPk(userId, { include: [Story] });
         if (!user) {
-            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException();
         }
         const readStories = user.stories;
         const allStories = await this.storyModel.findAll();
 
         if (readStories.length === allStories.length) {
-            throw new HttpException('No new stories, please wait', HttpStatus.NOT_FOUND);
+            throw new StoryNotFoundException();
         }
         let randStory = await this.getRandomStory();
         while (readStories.some(story => story.id === randStory.id)) {

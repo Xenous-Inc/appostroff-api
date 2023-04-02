@@ -17,9 +17,6 @@ export class UsersService {
     ) {}
     async create(dto: CreateUserDto): Promise<User> {
         const user = await this.userModel.create<User>(dto);
-        const role = await this.roleService.getRoleByValue('ADMIN');
-        await user.$set('roles', [role.id]);
-        user.roles = [role];
         return user;
     }
     async findUserById(id: string): Promise<User> {

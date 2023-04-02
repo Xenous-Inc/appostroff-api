@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Roles } from 'src/core/common/decorators/roles-auth.decorator';
-import { RolesGuard } from 'src/core/common/guards/roles.guard';
 import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './users.model';
 import { UsersService } from './users.service';
+import { Roles } from 'src/core/common/role/decorators/roles-auth.decorator';
+import { RolesGuard } from 'src/core/common/role/guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
@@ -48,8 +48,6 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Give a role' })
     @ApiResponse({ status: 200 })
-    @Roles('ADMIN')
-    @UseGuards(RolesGuard)
     @Post('/role')
     addRole(@Body() dto: AddRoleDto) {
         return this.usersService.addRole(dto);

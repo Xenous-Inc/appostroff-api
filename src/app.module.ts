@@ -8,8 +8,6 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { UsersModule } from './modules/users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AtGuard } from './core/common/guards';
 import { Story } from './modules/stories/stories.model';
 import { UserToStory } from './modules/models/user-story.model';
 import { StoriesModule } from './modules/stories/stories.module';
@@ -20,7 +18,6 @@ import { GenreToAuthor } from './modules/models/genre-author.model';
 import { AuthorsModule } from './modules/authors/authors.module';
 import { GenresModule } from './modules/genres/genres.module';
 import { StoryToGenre } from './modules/models/story-genre.model';
-import { Auth } from './modules/auth/auth.model';
 import { RolesModule } from './modules/roles/roles.module';
 import { Role } from './modules/roles/roles.model';
 import { UserToRole } from './modules/models/user-role.model';
@@ -29,6 +26,7 @@ import { Auth } from './modules/auth/auth.model';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './core/common/auth/guards';
 import { SequelizeExceptionFilter } from './core/common/exceptions/sequelize-exception.filter';
+import { AdminModule } from '@adminjs/nestjs';
 
 @Module({
     imports: [

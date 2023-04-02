@@ -5,6 +5,9 @@ export enum AppostroffExceptionCode {
     WrongPhoneCode = 601,
     SessionNotFound = 602,
     InvalidToken = 603,
+    RoleNotFound = 604,
+    StoryNotFound = 605,
+    UserNotFound = 606,
 }
 export interface IAppostroffExceptionResponse {
     code: AppostroffExceptionCode;

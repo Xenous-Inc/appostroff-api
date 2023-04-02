@@ -1,17 +1,17 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Roles } from 'src/core/common/decorators/roles-auth.decorator';
-import { RolesGuard } from 'src/core/common/guards/roles.guard';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { Story } from './stories.model';
 import { StoriesService } from './stories.service';
+import { RolesGuard } from 'src/core/common/role/guards/roles.guard';
+import { Roles } from 'src/core/common/role/decorators/roles-auth.decorator';
 
 @Controller('stories')
 export class StoriesController {
     constructor(private readonly storyService: StoriesService) {}
 
     @ApiOperation({ summary: 'Create story' })
-    @ApiResponse({ status: 200, description: 'Created new story' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'Created new story' })
     @Post()
     @Roles('AUTHOR', 'ADMIN')
     @UseGuards(RolesGuard)
@@ -20,14 +20,14 @@ export class StoriesController {
     }
 
     @ApiOperation({ summary: 'Get story' })
-    @ApiResponse({ status: 200, type: Story })
+    @ApiResponse({ status: HttpStatus.OK, type: Story })
     @Get(':id')
     getStory(@Param('id') id: string) {
         return this.storyService.getStory(id);
     }
 
     @ApiOperation({ summary: 'Get random story a guest' })
-    @ApiResponse({ status: 200, type: Story })
+    @ApiResponse({ status: HttpStatus.OK, type: Story })
     @Get()
     getRandomStory() {
         return this.storyService.getRandomStory();

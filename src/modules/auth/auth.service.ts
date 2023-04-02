@@ -75,8 +75,10 @@ export class AuthService {
     }
 
     async refreshTokens(id: string, rt: string): Promise<Tokens> {
+        const currentUser = await this.userModel.findOne({ where: { id: id } });
+        if (!currentUser || !currentUser.hashedRt) throw new ForbiddenException('Access denied');
         const rtMatch = await compareSync(rt, currentUser.hashedRt);
-        if (!rtMatch) throw new InvalidTokenException();
+        if (!rtMatch) throw new ForbiddenException('Access denied');
 
         const tokens = await this.getTokens(currentUser.id, currentUser.phone);
         await this.updateRtHash(currentUser.id, tokens.refresh_token);
