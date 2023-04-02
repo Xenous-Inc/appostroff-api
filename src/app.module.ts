@@ -7,8 +7,24 @@ import { validationSchema } from './config/validation';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { UsersModule } from './modules/users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from './modules/users/users.model';
 import { AuthModule } from './modules/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AtGuard } from './core/common/guards';
+import { Story } from './modules/stories/stories.model';
+import { UserToStory } from './modules/models/user-story.model';
+import { StoriesModule } from './modules/stories/stories.module';
+import { StoryToAuthor } from './modules/models/story-author.model';
+import { Author } from './modules/authors/authors.model';
+import { Genre } from './modules/genres/genres.model';
+import { GenreToAuthor } from './modules/models/genre-author.model';
+import { AuthorsModule } from './modules/authors/authors.module';
+import { GenresModule } from './modules/genres/genres.module';
+import { StoryToGenre } from './modules/models/story-genre.model';
+import { Auth } from './modules/auth/auth.model';
+import { RolesModule } from './modules/roles/roles.module';
+import { Role } from './modules/roles/roles.model';
+import { UserToRole } from './modules/models/user-role.model';
+import { User } from './modules/users/users.model';
 import { Auth } from './modules/auth/auth.model';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './core/common/auth/guards';
@@ -30,12 +46,28 @@ import { SequelizeExceptionFilter } from './core/common/exceptions/sequelize-exc
             password: configuration().db_pass,
             database: configuration().db_name,
             autoLoadModels: true,
-            dialectOptions:
-                process.env.NODE_ENV == 'production'
-                    ? { ssl: { require: 'true', rejectUnauthorized: false } }
-                    : undefined,
-            models: [User, Auth],
+            models: [
+                User,
+                Story,
+                Author,
+                Genre,
+                UserToStory,
+                UserToRole,
+                StoryToAuthor,
+                GenreToAuthor,
+                StoryToGenre,
+                Role,
+                Auth,
+            ],
+            // dialectOptions:
+            //     process.env.NODE_ENV == 'production'
+            //         ? { ssl: { require: 'true', rejectUnauthorized: false } }
+            //         : undefined,
         }),
+        RolesModule,
+        GenresModule,
+        AuthorsModule,
+        StoriesModule,
         UsersModule,
         AuthModule,
     ],

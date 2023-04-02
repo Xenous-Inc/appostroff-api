@@ -3,12 +3,15 @@ import { Tokens } from './types';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 import { hashSync, genSalt, compareSync } from 'bcryptjs';
-import { User } from '../users/users.model';
 import { JwtPayload } from './types';
 import { configuration } from '../../config/configuration';
 import { ConfirmCodeDto } from './dto/confirmCode.dto';
 import { Auth } from './auth.model';
 import { RequestCodeDto } from './dto/requestCode.dto';
+import { UsersService } from '../users/users.service';
+import { Role } from '../roles/roles.model';
+import { RolesService } from '../roles/roles.service';
+import { User } from '../users/users.model';
 import { InvalidTokenException, SessionNotFoundException, WrongPhoneCodeException } from '../../core/common/exceptions';
 
 @Injectable()
@@ -16,24 +19,27 @@ export class AuthService {
     constructor(
         @InjectModel(User) private userModel: typeof User,
         private jwtService: JwtService,
-        @InjectModel(Auth) private authModule: typeof Auth,
+        @InjectModel(Auth) private authModel: typeof Auth,
+        private userService: UsersService,
+        @InjectModel(Role) private roleService: RolesService,
     ) {}
 
     async requestCode(dto: RequestCodeDto): Promise<string> {
         const url = `https://api.ucaller.ru/v1.0/initCall?service_id=${configuration().ucaller_id}&key=${
             configuration().ucaller_token
         }&phone=${dto.phone.slice(1)}`;
-        console.log(url);
         const response: any = await fetch(url, {
             headers: {
                 Authorization: `Bearear ${configuration().ucaller_token}`,
             },
         });
         const result = await response.json();
+        console.log(response);
         if (response.status != 200) {
             throw new ForbiddenException('');
         }
-        const currentCode = await this.authModule.create({
+
+        const currentCode = await this.authModel.create({
             phone: dto.phone,
             code: parseInt(result.code),
             isConfirmed: false,
@@ -43,19 +49,21 @@ export class AuthService {
     }
 
     async confirmationCode(dto: ConfirmCodeDto): Promise<Tokens> {
-        const currentConfirmation = await this.authModule.findOne({ where: { id: dto.callId } });
-
+        const currentConfirmation = await this.authModel.findOne({ where: { id: dto.callId } });
+        console.log(currentConfirmation.phone);
         if (dto.code != currentConfirmation.code) {
             throw new WrongPhoneCodeException();
         }
         let currentUser = await this.userModel.findOne({ where: { phone: currentConfirmation.phone } });
+
         if (!currentUser) {
-            currentUser = await this.userModel.create({
+            currentUser = await this.userService.create({
                 phone: currentConfirmation.phone,
             });
         }
-        await this.authModule.update({ userId: currentUser.id }, { where: { id: dto.callId } });
-        await this.authModule.update({ isConfirmed: true }, { where: { id: dto.callId } });
+
+        await this.authModel.update({ userId: currentUser.id }, { where: { id: dto.callId } });
+        await this.authModel.update({ isConfirmed: true }, { where: { id: dto.callId } });
         const tokens = await this.getTokens(currentUser.id, currentUser.phone);
         await this.updateRtHash(currentUser.id, tokens.refresh_token);
         return tokens;
@@ -67,8 +75,6 @@ export class AuthService {
     }
 
     async refreshTokens(id: string, rt: string): Promise<Tokens> {
-        const currentUser = await this.userModel.findOne({ where: { id: id } });
-        if (!currentUser || !currentUser.hashedRt) throw new SessionNotFoundException();
         const rtMatch = await compareSync(rt, currentUser.hashedRt);
         if (!rtMatch) throw new InvalidTokenException();
 

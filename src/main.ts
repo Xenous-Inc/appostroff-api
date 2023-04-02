@@ -9,7 +9,9 @@ async function bootstrap() {
     const config = new DocumentBuilder().setTitle('Title').setDescription('Description').setVersion('1.0').build();
     const document = SwaggerModule.createDocument(app, config);
     app.useGlobalPipes(new ValidationPipe());
+
     SwaggerModule.setup('docs', app, document);
+
     await app.listen(configuration().port);
 }
 bootstrap();

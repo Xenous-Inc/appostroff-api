@@ -17,7 +17,7 @@ export class Auth extends Model<Auth> {
     @Column({ type: DataType.STRING })
     phone: string;
 
-    @Column({ type: DataType.INTEGER, defaultValue: false })
+    @Column({ type: DataType.INTEGER })
     code: number;
 
     @Column({ type: DataType.BOOLEAN })
