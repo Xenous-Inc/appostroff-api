@@ -26,6 +26,13 @@ export class StoriesController {
         return this.storyService.getStory(id);
     }
 
+    @ApiOperation({ summary: 'Get random story a guest' })
+    @ApiResponse({ status: 200, type: Story })
+    @Get()
+    getRandomStory() {
+        return this.storyService.getRandomStory();
+    }
+
     // @Get(':id')
     // clearStory(@Param('id') id: string) {
     //     return this.storyService.clearStory(id);

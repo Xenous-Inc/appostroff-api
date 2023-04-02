@@ -9,7 +9,7 @@ export class RolesController {
     constructor(private roleService: RolesService) {}
 
     @ApiOperation({ summary: 'Create role' })
-    @ApiResponse({ status: 200, description: 'Created new role' })
+    @ApiResponse({ status: 201, description: 'Created new role' })
     @Post()
     create(@Body() dto: CreateRoleDto) {
         return this.roleService.createRole(dto);
