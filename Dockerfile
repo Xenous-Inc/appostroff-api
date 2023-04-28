@@ -1,7 +1,6 @@
 FROM node:18-alpine as node_modules
 WORKDIR /tmp/
 COPY package.json ./
-COPY prisma/ prisma/
 RUN yarn install
 
 FROM node:18-alpine as dist
